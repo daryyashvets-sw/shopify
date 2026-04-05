@@ -33,8 +33,11 @@ test.describe("home page", () => {
   test("should open correct product page with matching name", async ({
     page,
   }) => {
-    const productNameFromHomepage = await homePageInstance.clickFirstProduct();
     const productPageInstance = new ProductPage(page);
+
+    const productNameFromHomepage =
+      await homePageInstance.getFirstProductName();
+    await homePageInstance.clickProduct(productNameFromHomepage);
     const productNameFromProductPage =
       await productPageInstance.getProductName();
     expect(productNameFromHomepage).toBe(productNameFromProductPage);

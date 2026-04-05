@@ -1,6 +1,7 @@
 import { Page, Locator } from "@playwright/test";
+import { BasePage } from "./basePage";
 
-export class ProductPage {
+export class ProductPage extends BasePage {
   readonly page: Page;
   readonly addToCartButton: Locator;
   readonly cartCount: Locator;
@@ -9,6 +10,7 @@ export class ProductPage {
   readonly productNames: Locator;
 
   constructor(page: Page) {
+    super(page);
     this.page = page;
     this.addToCartButton = page.locator(".add-to-cart");
     this.cartCount = page.locator("#cart-target-desktop");

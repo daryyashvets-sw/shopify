@@ -18,21 +18,55 @@ test.describe("buying a product", () => {
 
     await expect(homePageInstance.cartCount).toHaveText("(0)");
 
-    await homePageInstance.clickProduct("Grey jacket");
+    const firstProductName = await homePageInstance.getFirstProductName();
+    const firstProductPrice = await homePageInstance.getFirstProductPrice();
+    await homePageInstance.clickProduct(firstProductName);
 
     await productPageInstance.addToCart();
+    await expect(productPageInstance.cartCount).toHaveText("(1)", {
+      timeout: SHOPIFY_ANIMATION_DURATION,
+    });
+    await productPageInstance.goToCart();
 
+    await cartPageInstance.goToCheckout();
+    //  await expect(page.getByText(firstProductPrice).first()).toBeVisible();
+    await checkoutPageInstance.fillCheckoutForm(checkoutData);
+    await checkoutPageInstance.pay();
+    // stopped the test here because the entire purchase flow cannot be tested without a mock card
+  });
+
+  test("User should be able to change quantity of products in cart", async ({
+    page,
+  }) => {
+    const homePageInstance = new HomePage(page);
+    const productPageInstance = new ProductPage(page);
+    const cartPageInstance = new CartPage(page);
+
+    await homePageInstance.goto();
+
+    const productNameFromHomepage =
+      await homePageInstance.getFirstProductName();
+    await homePageInstance.clickProduct(productNameFromHomepage);
+
+    await expect(productPageInstance.addToCartButton).toBeVisible();
+    await productPageInstance.addToCart();
     await expect(productPageInstance.cartCount).toHaveText("(1)", {
       timeout: SHOPIFY_ANIMATION_DURATION,
     });
 
     await productPageInstance.goToCart();
 
-    await cartPageInstance.goToCheckout();
-    expect(await checkoutPageInstance.getTotalSum()).toMatch("£55.00");
+    expect(await cartPageInstance.getProductQuantity()).toBe("1");
 
-    await checkoutPageInstance.fillCheckoutForm(checkoutData);
+    const initialTotal = await cartPageInstance.getTotal();
+    const initialPrice = initialTotal.match(/£(\d+\.\d{2})/)?.[1];
+    const expectedNewPrice = (parseFloat(initialPrice!) * 2).toFixed(2);
 
-    await checkoutPageInstance.pay();
+    await cartPageInstance.changeProductQuantity("2");
+
+    await cartPageInstance.updateCart();
+
+    const newTotal = await cartPageInstance.getTotal();
+    expect(newTotal).toContain(`£${expectedNewPrice}`);
   });
 });

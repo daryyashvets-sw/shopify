@@ -1,7 +1,8 @@
 import { Page, Locator, expect } from "@playwright/test";
 import { CheckoutData } from "../fixtures/checkoutData";
+import { BasePage } from "./basePage";
 
-export class CheckoutPage {
+export class CheckoutPage extends BasePage {
   readonly page: Page;
   readonly email: Locator;
   readonly country: Locator;
@@ -14,6 +15,7 @@ export class CheckoutPage {
   readonly payButton: Locator;
 
   constructor(page: Page) {
+    super(page);
     this.page = page;
     this.email = page.getByRole("textbox", { name: "Email" });
     this.country = page.locator('select[name="countryCode"]');
@@ -29,7 +31,6 @@ export class CheckoutPage {
     this.payButton = page.getByRole("button", { name: "Pay now" });
   }
 
-  // Constructor can't handle async iframe access, so I use methods instead
   async getPaymentFrame() {
     return this.page.locator("iframe").first().contentFrame();
   }
@@ -56,7 +57,7 @@ export class CheckoutPage {
 
   async fillCheckoutForm(data: CheckoutData) {
     await this.email.fill(data.email);
-    await this.country.selectOption("NL");
+    await this.country.selectOption(data.country);
     await this.lastName.fill(data.lastName);
     await this.apartment.fill(data.apartment);
     await this.postalCode.fill(data.postalCode);
@@ -70,7 +71,9 @@ export class CheckoutPage {
 
   async getTotalSum() {
     const totalText = await this.totalSum.textContent();
-    return totalText?.trim() || "";
+    const totalSum = totalText?.trim().substring(1) || "";
+    console.log(totalSum);
+    return parseInt(totalSum);
   }
 
   async pay() {
