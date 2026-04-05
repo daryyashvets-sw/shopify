@@ -7,35 +7,35 @@ import { CheckoutPage } from "../../pages/checkoutPage";
 
 const SHOPIFY_ANIMATION_DURATION = 4000;
 
-test.describe("buying a product", () => {
-  test("User should be able to buy a product", async ({ page }) => {
-    const homePageInstance = new HomePage(page);
-    const productPageInstance = new ProductPage(page);
-    const cartPageInstance = new CartPage(page);
-    const checkoutPageInstance = new CheckoutPage(page);
+test.describe("cart and checkout", () => {
+  test("should complete checkout flow up to payment", async ({ page }) => {
+    const homePage = new HomePage(page);
+    const productPage = new ProductPage(page);
+    const cartPage = new CartPage(page);
+    const checkoutPage = new CheckoutPage(page);
 
-    await homePageInstance.goto();
+    await homePage.goto();
 
-    await expect(homePageInstance.cartCount).toHaveText("(0)");
+    await expect(homePage.cartCount).toHaveText("(0)");
 
-    const firstProductName = await homePageInstance.getFirstProductName();
-    const firstProductPrice = await homePageInstance.getFirstProductPrice();
-    await homePageInstance.clickProduct(firstProductName);
+    const firstProductName = await homePage.getFirstProductName();
+    const firstProductPrice = await homePage.getFirstProductPrice();
+    await homePage.clickProduct(firstProductName);
 
-    await productPageInstance.addToCart();
-    await expect(productPageInstance.cartCount).toHaveText("(1)", {
+    await productPage.addToCart();
+    await expect(productPage.cartCount).toHaveText("(1)", {
       timeout: SHOPIFY_ANIMATION_DURATION,
     });
-    await productPageInstance.goToCart();
+    await productPage.goToCart();
 
-    await cartPageInstance.goToCheckout();
+    await cartPage.goToCheckout();
     //  await expect(page.getByText(firstProductPrice).first()).toBeVisible();
-    await checkoutPageInstance.fillCheckoutForm(checkoutData);
-    await checkoutPageInstance.pay();
+    await checkoutPage.fillCheckoutForm(checkoutData);
+    await checkoutPage.pay();
     // stopped the test here because the entire purchase flow cannot be tested without a mock card
   });
 
-  test("User should be able to change quantity of products in cart", async ({
+  test("should update total after changing quantity of products", async ({
     page,
   }) => {
     const homePageInstance = new HomePage(page);
@@ -68,5 +68,29 @@ test.describe("buying a product", () => {
 
     const newTotal = await cartPageInstance.getTotal();
     expect(newTotal).toContain(`£${expectedNewPrice}`);
+  });
+
+  test("should display empty cart message after removing product", async ({
+    page,
+  }) => {
+    const homePageInstance = new HomePage(page);
+    const productPageInstance = new ProductPage(page);
+    const cartPageInstance = new CartPage(page);
+
+    await homePageInstance.goto();
+
+    const productNameFromHomepage =
+      await homePageInstance.getFirstProductName();
+    await homePageInstance.clickProduct(productNameFromHomepage);
+
+    await expect(productPageInstance.addToCartButton).toBeVisible();
+    await productPageInstance.addToCart();
+    await expect(productPageInstance.cartCount).toHaveText("(1)", {
+      timeout: SHOPIFY_ANIMATION_DURATION,
+    });
+
+    await productPageInstance.goToCart();
+    await cartPageInstance.removeFromCart();
+    await expect(page.getByText("It appears that your cart is")).toBeVisible();
   });
 });

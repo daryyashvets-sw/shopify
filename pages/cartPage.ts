@@ -7,6 +7,7 @@ export class CartPage extends BasePage {
   readonly productQuantity: Locator;
   readonly updateButton: Locator;
   readonly total: Locator;
+  readonly removeButton: Locator;
 
   constructor(page: Page) {
     super(page);
@@ -15,6 +16,7 @@ export class CartPage extends BasePage {
     this.productQuantity = page.locator("#cart #updates_611945025");
     this.updateButton = page.getByRole("button", { name: "Update" });
     this.total = page.getByRole("heading").filter({ hasText: "Total £" });
+    this.removeButton = page.getByRole("link", { name: "x" });
   }
 
   async goToCheckout() {
@@ -35,5 +37,9 @@ export class CartPage extends BasePage {
 
   async updateCart() {
     await this.updateButton.click();
+  }
+
+  async removeFromCart() {
+    await this.removeButton.click();
   }
 }
