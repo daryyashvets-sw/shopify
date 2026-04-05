@@ -1,23 +1,29 @@
 import { test, expect } from "@playwright/test";
 import { HomePage } from "../../pages/homePage";
 
-test.describe("navigating on the app", () => {
-  test("User should be able to navigate throughout the app", async ({
-    page,
-  }) => {
-    const homePageInstance = new HomePage(page);
-    await homePageInstance.goto();
+test.describe("Main Navigation", () => {
+  let homePage: HomePage;
 
-    await homePageInstance.goToCatalog();
-    await expect(page).toHaveURL("/collections/all");
+  test.beforeEach(async ({ page }) => {
+    homePage = new HomePage(page);
+    await homePage.goto();
+  });
+
+  test("should navigate to Catalog page", async ({ page }) => {
+    await homePage.goToCatalog();
+    await expect(page).toHaveURL(/\/collections\/all/);
     await expect(page).toHaveTitle("Products – Sauce Demo");
+  });
 
-    await homePageInstance.goToBlog();
-    await expect(page).toHaveURL("blogs/news");
+  test("should navigate to Blog page", async ({ page }) => {
+    await homePage.goToBlog();
+    await expect(page).toHaveURL(/\/blogs\/news/);
     await expect(page).toHaveTitle("News – Sauce Demo");
+  });
 
-    await homePageInstance.goToAboutUs();
-    await expect(page).toHaveURL("pages/about-us");
+  test("should navigate to About Us page", async ({ page }) => {
+    await homePage.goToAboutUs();
+    await expect(page).toHaveURL(/\/pages\/about-us/);
     await expect(page).toHaveTitle("About Us – Sauce Demo");
   });
 });
