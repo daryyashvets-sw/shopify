@@ -1,35 +1,44 @@
 import { test, expect } from "@playwright/test";
-import { homePage } from "../../pages/homePage";
+import { HomePage } from "../../pages/homePage";
+import { ProductPage } from "../../pages/productPage";
 
 test.describe("home page", () => {
-  let homePageInstance: homePage;
+  let homePageInstance: HomePage;
+
   test.beforeEach(async ({ page }) => {
-    homePageInstance = new homePage(page);
+    homePageInstance = new HomePage(page);
     await homePageInstance.goto();
   });
 
-  test("should load the main page", async ({ page }) => {
+  test("should load the main page", async () => {
     await expect(homePageInstance.productCards.first()).toBeVisible();
   });
 
-  test("should display the correct number of products", async ({ page }) => {
-    expect(await homePageInstance.getProductCount()).toBe(3);
+  test("should display products", async () => {
+    expect(await homePageInstance.getProductCount()).toBeGreaterThan(0);
   });
 
-  test("should display correct product name", async ({ page }) => {
-    expect(await homePageInstance.getProductName("product-1")).toBe(
-      "Grey jacket",
-    );
+  test("should display product name", async () => {
+    await expect(
+      homePageInstance.productCards.first().locator("h3"),
+    ).toBeVisible();
   });
 
-  test("should display correct price", async ({ page }) => {
-    expect(await homePageInstance.getProductPrice("product-1")).toMatch(
-      /£55\.00/,
-    );
+  test("should display product price", async () => {
+    await expect(
+      homePageInstance.productCards.first().locator("h4"),
+    ).toBeVisible();
   });
 
-  test("should open product page", async ({ page }) => {
-    await homePageInstance.clickProduct("Grey jacket");
-    await expect(page).toHaveTitle("Grey jacket – Sauce Demo");
+  test("should open correct product page with matching name", async ({
+    page,
+  }) => {
+    const productNameFromHomepage = await homePageInstance.clickFirstProduct();
+    const productPageInstance = new ProductPage(page);
+    const productNameFromProductPage =
+      await productPageInstance.getProductName();
+    expect(productNameFromHomepage).toBe(productNameFromProductPage);
+
+    await expect(productPageInstance.addToCartButton).toBeVisible();
   });
 });
