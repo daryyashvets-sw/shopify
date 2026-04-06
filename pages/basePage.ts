@@ -6,6 +6,13 @@ export class BasePage {
   readonly catalogNavigationItem: Locator;
   readonly blogNavigationItem: Locator;
   readonly aboutUsNavigationItem: Locator;
+  readonly signupLink: Locator;
+  readonly myAccountLink: Locator;
+  readonly logoutLink: Locator;
+  readonly loginLink: Locator;
+  readonly searchInput: Locator;
+  readonly productCards: Locator;
+  readonly cartCount: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -15,6 +22,13 @@ export class BasePage {
     this.aboutUsNavigationItem = page
       .locator("#main-menu")
       .getByRole("link", { name: "About us" });
+    this.signupLink = page.getByRole("link", { name: "Sign up" });
+    this.myAccountLink = page.getByRole("link", { name: "My Account" });
+    this.logoutLink = page.getByRole("link", { name: "Log out" });
+    this.loginLink = page.getByRole("link", { name: "Log in" });
+    this.searchInput = page.getByRole("textbox", { name: "Search" });
+    this.productCards = page.locator('a[id^="product-"]');
+    this.cartCount = page.locator("#cart-target-desktop");
   }
   async goToHome() {
     await this.homeNavigationItem.click();
@@ -27,5 +41,47 @@ export class BasePage {
   }
   async goToAboutUs() {
     await this.aboutUsNavigationItem.click();
+  }
+
+  async clickSignupLink() {
+    await this.signupLink.click();
+  }
+
+  async clickMyAccountLink() {
+    await this.myAccountLink.click();
+  }
+
+  async clickLogoutLink() {
+    await this.logoutLink.click();
+  }
+
+  async clickLoginLink() {
+    await this.loginLink.click();
+  }
+
+  async getProductCount() {
+    return await this.productCards.count();
+  }
+
+  async searchForProduct(productName: string) {
+    await this.searchInput.fill(productName);
+    await this.searchInput.press("Enter");
+  }
+
+  async goto() {
+    await this.page.goto("/");
+  }
+  async getFirstProductName() {
+    const name = await this.productCards.first().locator("h3").textContent();
+    return name?.trim() || "";
+  }
+
+  async getFirstProductPrice() {
+    const name = await this.productCards.first().locator("h4").textContent();
+    return name?.trim() || "";
+  }
+
+  async clickProduct(name: string) {
+    await this.productCards.filter({ hasText: name }).click();
   }
 }

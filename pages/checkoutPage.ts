@@ -1,5 +1,5 @@
 import { Page, Locator, expect } from "@playwright/test";
-import { CheckoutData } from "../fixtures/checkoutData";
+import { UserData } from "../fixtures/userData";
 import { BasePage } from "./basePage";
 
 export class CheckoutPage extends BasePage {
@@ -55,7 +55,7 @@ export class CheckoutPage extends BasePage {
     await frame.locator("#name").fill(nameOnCard);
   }
 
-  async fillCheckoutForm(data: CheckoutData) {
+  async fillCheckoutForm(data: UserData) {
     await this.email.fill(data.email);
     await this.country.selectOption(data.country);
     await this.lastName.fill(data.lastName);
