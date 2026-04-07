@@ -1,4 +1,27 @@
-export const testBooking = {
+declare global {
+  namespace NodeJS {
+    interface ProcessEnv {
+      SAUCE_PASSWORD: string;
+      BOOKER_PASSWORD: string;
+    }
+  }
+}
+
+export interface BookingDates {
+  checkin: string;
+  checkout: string;
+}
+
+export interface Booking {
+  firstname: string;
+  lastname: string;
+  totalprice: number;
+  depositpaid: boolean;
+  bookingdates: BookingDates;
+  additionalneeds: string;
+}
+
+export const testBooking: Booking = {
   firstname: "Jim",
   lastname: "Brown",
   totalprice: 111,
@@ -10,11 +33,12 @@ export const testBooking = {
   additionalneeds: "Breakfast",
 };
 
-export const authCredentials = {
-  username: "admin",
-  password: "password123",
-};
+export interface AuthCredentials {
+  username: string;
+  password: string;
+}
 
-export const getAuthHeader = (token: string) => ({
-  Cookie: `token=${token}`,
-});
+export const authCredentials: AuthCredentials = {
+  username: "admin",
+  password: process.env.BOOKER_PASSWORD,
+};

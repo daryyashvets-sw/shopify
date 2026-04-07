@@ -1,4 +1,3 @@
-// tests/api/restfulBooker.spec.ts
 import { test, expect } from "@playwright/test";
 import { APIHelper } from "../../helpers/apiHelper";
 import { testBooking, authCredentials } from "../../fixtures/restfulBookerData";
@@ -10,15 +9,21 @@ test.describe("Booking API CRUD", () => {
 
   test.beforeAll(async ({ request }) => {
     apiHelper = new APIHelper(request);
-    authToken = await apiHelper.authenticate(
+    const authResponse = await apiHelper.authenticate(
       authCredentials.username,
       authCredentials.password,
     );
+    expect(authResponse.ok()).toBeTruthy();
+    const authData = await authResponse.json();
+    authToken = authData.token;
   });
 
   test.beforeEach(async ({ request }) => {
     apiHelper = new APIHelper(request);
-    bookingId = await apiHelper.createBooking(testBooking);
+    const createResponse = await apiHelper.createBooking(testBooking);
+    expect(createResponse.ok()).toBeTruthy();
+    const responseData = await createResponse.json();
+    bookingId = responseData.bookingid;
   });
 
   test("CREATE - verify booking was created successfully", async () => {
@@ -27,8 +32,10 @@ test.describe("Booking API CRUD", () => {
   });
 
   test("GET - retrieve existing booking", async () => {
-    const booking = await apiHelper.getBooking(bookingId);
+    const response = await apiHelper.getBooking(bookingId);
+    expect(response.status()).toBe(200);
 
+    const booking = await response.json();
     expect(booking.firstname).toBe(testBooking.firstname);
     expect(booking.lastname).toBe(testBooking.lastname);
     expect(booking.totalprice).toBe(testBooking.totalprice);
@@ -40,18 +47,23 @@ test.describe("Booking API CRUD", () => {
       firstname: "Tom",
     };
 
-    const updated = await apiHelper.updateBooking(
+    const response = await apiHelper.updateBooking(
       bookingId,
       updatedBooking,
       authToken,
     );
+    expect(response.status()).toBe(200);
 
+    const updated = await response.json();
     expect(updated.firstname).toBe("Tom");
     expect(updated.lastname).toBe(testBooking.lastname);
   });
 
   test("DELETE - remove existing booking", async () => {
-    await apiHelper.deleteBooking(bookingId, authToken);
-    await apiHelper.verifyBookingDeleted(bookingId);
+    const deleteResponse = await apiHelper.deleteBooking(bookingId, authToken);
+    expect(deleteResponse.status()).toBe(201);
+
+    const verifyResponse = await apiHelper.getBooking(bookingId);
+    expect(verifyResponse.status()).toBe(404);
   });
 });

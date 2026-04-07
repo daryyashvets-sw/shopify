@@ -1,9 +1,8 @@
-import { Page, Locator, expect } from "@playwright/test";
+import { Page, Locator } from "@playwright/test";
 import { UserData } from "../fixtures/userData";
 import { BasePage } from "./basePage";
 
 export class CheckoutPage extends BasePage {
-  readonly page: Page;
   readonly email: Locator;
   readonly country: Locator;
   readonly lastName: Locator;
@@ -16,7 +15,6 @@ export class CheckoutPage extends BasePage {
 
   constructor(page: Page) {
     super(page);
-    this.page = page;
     this.email = page.getByRole("textbox", { name: "Email" });
     this.country = page.locator('select[name="countryCode"]');
     this.lastName = page.getByRole("textbox", { name: "Last Name" });

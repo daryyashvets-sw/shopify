@@ -27,7 +27,7 @@ export class BasePage {
     this.myAccountLink = page.getByRole("link", { name: "My Account" });
     this.logoutLink = page.getByRole("link", { name: "Log out" });
     this.loginLink = page.getByRole("link", { name: "Log in" });
-    this.searchInput = page.getByRole("textbox", { name: "Search" });
+    this.searchInput = page.locator("#search-field");
     this.productCards = page.locator('a[id^="product-"]');
     this.cartCount = page.locator("#cart-target-desktop");
     this.mobileMenuToggle = page.locator("#toggle-menu");
@@ -73,6 +73,7 @@ export class BasePage {
   }
 
   async searchForProduct(productName: string) {
+    await this.searchInput.waitFor({ state: "visible" });
     await this.searchInput.fill(productName);
     await this.searchInput.press("Enter");
 

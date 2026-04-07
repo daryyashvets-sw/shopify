@@ -2,7 +2,6 @@ import { Page, Locator } from "@playwright/test";
 import { BasePage } from "./basePage";
 
 export class CartPage extends BasePage {
-  readonly page: Page;
   readonly checkoutButton: Locator;
   readonly productQuantity: Locator;
   readonly updateButton: Locator;
@@ -11,7 +10,6 @@ export class CartPage extends BasePage {
 
   constructor(page: Page) {
     super(page);
-    this.page = page;
     this.checkoutButton = page.getByRole("button", { name: "Check Out" });
     this.productQuantity = page.locator("#cart .quantity input");
     this.updateButton = page.getByRole("button", { name: "Update" });

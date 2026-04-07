@@ -3,7 +3,6 @@ import { BasePage } from "./basePage";
 import { ExistingUser } from "../fixtures/userData";
 
 export class LoginPage extends BasePage {
-  readonly page: Page;
   readonly emailInput: Locator;
   readonly passwordInput: Locator;
   readonly signinButton: Locator;
@@ -11,7 +10,6 @@ export class LoginPage extends BasePage {
 
   constructor(page: Page) {
     super(page);
-    this.page = page;
     this.emailInput = page.getByLabel("Email Address");
     this.passwordInput = page.getByLabel("Password");
     this.signinButton = page.getByRole("button", { name: "Sign in" });

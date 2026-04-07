@@ -1,5 +1,9 @@
-// No explicit interface needed since these objects aren't passed to functions as parameters
-export const socialMediaLinks = [
+export interface SocialMediaLink {
+  name: string;
+  urlPattern: string;
+}
+
+export const socialMediaLinks: SocialMediaLink[] = [
   { name: "Facebook", urlPattern: "facebook.com" },
   { name: "Twitter", urlPattern: "twitter.com" },
   { name: "Instagram", urlPattern: "instagram.com" },

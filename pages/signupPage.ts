@@ -3,7 +3,6 @@ import { BasePage } from "./basePage";
 import { UserData } from "../fixtures/userData";
 
 export class SignupPage extends BasePage {
-  readonly page: Page;
   readonly firstNameInput: Locator;
   readonly lastNameInput: Locator;
   readonly emailInput: Locator;
@@ -14,7 +13,6 @@ export class SignupPage extends BasePage {
 
   constructor(page: Page) {
     super(page);
-    this.page = page;
     this.firstNameInput = page.locator("input#first_name");
     this.lastNameInput = page.locator("input#last_name");
     this.emailInput = page.locator("input#email");

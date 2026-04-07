@@ -12,5 +12,3 @@ node_modules/
 # Allure
 allure-results/
 allure-report/
-
-SAUCE_PASSWORD=password123

@@ -22,10 +22,8 @@ export interface UserData {
   password: string;
 }
 
-const email = `test${Date.now()}@example.com`;
-
 export const userData: UserData = {
-  email: email,
+  email: `test${Date.now()}@example.com`,
   country: "NL",
   firstName: "User",
   lastName: "Test",
@@ -50,7 +48,12 @@ export const existingUser: ExistingUser = {
   password: process.env.SAUCE_PASSWORD,
 };
 
-export const invalidCredentials = {
+export interface InvalidUserCredentials {
+  wrongPassword: string;
+  wrongEmail: string;
+}
+
+export const invalidCredentials: InvalidUserCredentials = {
   wrongPassword: "incorrectPassword",
   wrongEmail: "nonexistent@example.com",
 };
