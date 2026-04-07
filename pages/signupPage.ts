@@ -9,6 +9,8 @@ export class SignupPage extends BasePage {
   readonly emailInput: Locator;
   readonly passwordInput: Locator;
   readonly createButton: Locator;
+  readonly createAccountHeading: Locator;
+  readonly duplicateEmailError: Locator;
 
   constructor(page: Page) {
     super(page);
@@ -18,6 +20,12 @@ export class SignupPage extends BasePage {
     this.emailInput = page.locator("input#email");
     this.passwordInput = page.locator("input#password");
     this.createButton = page.getByRole("button", { name: "Create" });
+    this.createAccountHeading = page.getByRole("heading", {
+      name: "Create Account",
+    });
+    this.duplicateEmailError = page.getByText(
+      "This email address is already associated with an account.",
+    );
   }
 
   async fillSignupForm(data: UserData) {

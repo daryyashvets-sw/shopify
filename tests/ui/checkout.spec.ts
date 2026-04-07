@@ -1,35 +1,29 @@
 import { test, expect } from "@playwright/test";
-import { HomePage } from "../../pages/homePage";
+import { BasePage } from "../../pages/basePage";
 import { ProductPage } from "../../pages/productPage";
 import { CartPage } from "../../pages/cartPage";
 import { userData } from "../../fixtures/userData";
 import { CheckoutPage } from "../../pages/checkoutPage";
 
-const SHOPIFY_ANIMATION_DURATION = 4000;
-
 test.describe("Cart and checkout", () => {
   test("should complete checkout flow up to payment", async ({ page }) => {
-    const homePage = new HomePage(page);
+    const basePage = new BasePage(page);
     const productPage = new ProductPage(page);
     const cartPage = new CartPage(page);
     const checkoutPage = new CheckoutPage(page);
 
-    await homePage.goto();
+    await basePage.goto();
 
-    await expect(homePage.cartCount).toHaveText("(0)");
+    await expect(basePage.cartCount).toHaveText("(0)");
 
-    const firstProductName = await homePage.getFirstProductName();
-    const firstProductPrice = await homePage.getFirstProductPrice();
-    await homePage.clickProduct(firstProductName);
+    const firstProductName = await basePage.getFirstProductName();
+    await basePage.clickProduct(firstProductName);
 
     await productPage.addToCart();
-    await expect(productPage.cartCount).toHaveText("(1)", {
-      timeout: SHOPIFY_ANIMATION_DURATION,
-    });
+    await expect(productPage.cartCount).toHaveText("(1)");
     await productPage.goToCart();
 
     await cartPage.goToCheckout();
-    //  await expect(page.getByText(firstProductPrice).first()).toBeVisible();
     await checkoutPage.fillCheckoutForm(userData);
     await checkoutPage.pay();
     // stopped the test here because the entire purchase flow cannot be tested without a mock card
@@ -38,20 +32,18 @@ test.describe("Cart and checkout", () => {
   test("should update total after changing quantity of products", async ({
     page,
   }) => {
-    const homePage = new HomePage(page);
+    const basePage = new BasePage(page);
     const productPage = new ProductPage(page);
     const cartPage = new CartPage(page);
 
-    await homePage.goto();
+    await basePage.goto();
 
-    const productNameFromHomepage = await homePage.getFirstProductName();
-    await homePage.clickProduct(productNameFromHomepage);
+    const productNameFromHomepage = await basePage.getFirstProductName();
+    await basePage.clickProduct(productNameFromHomepage);
 
     await expect(productPage.addToCartButton).toBeVisible();
     await productPage.addToCart();
-    await expect(productPage.cartCount).toHaveText("(1)", {
-      timeout: SHOPIFY_ANIMATION_DURATION,
-    });
+    await expect(productPage.cartCount).toHaveText("(1)");
 
     await productPage.goToCart();
 
@@ -59,7 +51,13 @@ test.describe("Cart and checkout", () => {
 
     const initialTotal = await cartPage.getTotal();
     const initialPrice = initialTotal.match(/£(\d+\.\d{2})/)?.[1];
-    const expectedNewPrice = (parseFloat(initialPrice!) * 2).toFixed(2);
+
+    if (!initialPrice) {
+      expect(initialPrice).toBeTruthy();
+      return; // this is for TS to understand that initialPrice is defined
+    }
+
+    const expectedNewPrice = (parseFloat(initialPrice) * 2).toFixed(2);
 
     await cartPage.changeProductQuantity("2");
 
@@ -72,20 +70,18 @@ test.describe("Cart and checkout", () => {
   test("should display empty cart message after removing product", async ({
     page,
   }) => {
-    const homePage = new HomePage(page);
+    const basePage = new BasePage(page);
     const productPage = new ProductPage(page);
     const cartPage = new CartPage(page);
 
-    await homePage.goto();
+    await basePage.goto();
 
-    const productNameFromHomepage = await homePage.getFirstProductName();
-    await homePage.clickProduct(productNameFromHomepage);
+    const productNameFromHomepage = await basePage.getFirstProductName();
+    await basePage.clickProduct(productNameFromHomepage);
 
     await expect(productPage.addToCartButton).toBeVisible();
     await productPage.addToCart();
-    await expect(productPage.cartCount).toHaveText("(1)", {
-      timeout: SHOPIFY_ANIMATION_DURATION,
-    });
+    await expect(productPage.cartCount).toHaveText("(1)");
 
     await productPage.goToCart();
     await cartPage.removeFromCart();

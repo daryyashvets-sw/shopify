@@ -1,80 +1,59 @@
 import { test, expect } from "@playwright/test";
-import { HomePage } from "../../pages/homePage";
+import { BasePage } from "../../pages/basePage";
 import { SignupPage } from "../../pages/signupPage";
-import { userData } from "../../fixtures/userData";
+import { existingUser, userData } from "../../fixtures/userData";
+import { AccountPage } from "../../pages/accountPage";
 
-test.describe("User signup and duplicate email validation", () => {
-  let homePage: HomePage;
+test.describe.skip("User signup and duplicate email validation", () => {
+  let basePage: BasePage;
   let signupPage: SignupPage;
 
   test.beforeEach(async ({ page }) => {
-    homePage = new HomePage(page);
+    basePage = new BasePage(page);
     signupPage = new SignupPage(page);
-    await homePage.goto();
+
+    await basePage.goto();
   });
 
-  test("should successfully signup and log out", async ({ page }) => {
-    await homePage.clickSignupLink();
+  test("should successfully signup and log out", async () => {
+    const accountPage = new AccountPage(basePage.page);
 
-    await expect(
-      page.getByRole("heading", { name: "Create Account" }),
-    ).toBeVisible();
+    await basePage.clickSignupLink();
+
+    await expect(signupPage.createAccountHeading).toBeVisible();
 
     await signupPage.fillSignupForm(userData);
     await signupPage.clickCreateButton();
 
-    // using 'page' here to check the presence of 'My Account' link because it is in the header and available on all pages after login
     // CAPTCHA blocks automated execution
-    await expect(page.getByRole("link", { name: "My Account" })).toBeVisible();
+    await expect(basePage.myAccountLink).toBeVisible();
 
-    await page.getByRole("link", { name: "My Account" }).click();
+    await basePage.myAccountLink.click();
 
-    await expect(
-      page.getByRole("heading", { name: "Account Details and Order History" }),
-    ).toBeVisible();
+    await expect(accountPage.accountPageHeading).toBeVisible();
 
-    await page.getByRole("link", { name: "Log out" }).click();
+    await accountPage.logoutLink.click();
 
-    // doublecheck if there is log in:
-    await expect(page.getByRole("link", { name: "Log in" })).toBeVisible();
-    await expect(page).toHaveTitle("Sauce Demo");
+    await expect(basePage.loginLink).toBeVisible();
+    await expect(basePage.signupLink).toBeVisible();
+    await expect(basePage.myAccountLink).not.toBeVisible();
+    await expect(basePage.page).toHaveTitle("Sauce Demo");
   });
 
-  test("should not allow signup with duplicate email", async ({ page }) => {
-    const duplicateEmail = `test${Date.now()}@example.com`;
+  test("should not allow signup with duplicate email", async () => {
+    await basePage.clickSignupLink();
 
-    await homePage.clickSignupLink();
-
-    await expect(
-      page.getByRole("heading", { name: "Create Account" }),
-    ).toBeVisible();
+    await expect(signupPage.createAccountHeading).toBeVisible();
 
     await signupPage.fillSignupForm({
       ...userData,
-      email: duplicateEmail,
+      email: existingUser.email,
     });
 
     // CAPTCHA blocks automated execution
     await signupPage.clickCreateButton();
 
-    await expect(page).toHaveTitle("Sauce Demo");
-    await expect(page.getByRole("link", { name: "My Account" })).toBeVisible();
-
-    await page.getByRole("link", { name: "Log out" }).click();
-
-    await homePage.clickSignupLink();
-
-    await signupPage.fillSignupForm({
-      ...userData,
-      email: duplicateEmail,
-    });
-
-    await signupPage.clickCreateButton();
-
-    await expect(
-      page.getByText(
-        "This email address is already associated with an account.",
-      ),
-    ).toBeVisible();
+    await expect(signupPage.duplicateEmailError).toBeVisible();
+    await expect(signupPage.myAccountLink).not.toBeVisible();
   });
 });

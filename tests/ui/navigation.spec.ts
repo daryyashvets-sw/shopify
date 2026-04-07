@@ -1,28 +1,28 @@
 import { test, expect } from "@playwright/test";
-import { HomePage } from "../../pages/homePage";
+import { BasePage } from "../../pages/basePage";
 
 test.describe("Main Navigation", () => {
-  let homePage: HomePage;
+  let basePage: BasePage;
 
   test.beforeEach(async ({ page }) => {
-    homePage = new HomePage(page);
-    await homePage.goto();
+    basePage = new BasePage(page);
+    await basePage.goto();
   });
 
   test("should navigate to Catalog page", async ({ page }) => {
-    await homePage.goToCatalog();
+    await basePage.goToCatalog();
     await expect(page).toHaveURL(/\/collections\/all/);
     await expect(page).toHaveTitle("Products – Sauce Demo");
   });
 
   test("should navigate to Blog page", async ({ page }) => {
-    await homePage.goToBlog();
+    await basePage.goToBlog();
     await expect(page).toHaveURL(/\/blogs\/news/);
     await expect(page).toHaveTitle("News – Sauce Demo");
   });
 
   test("should navigate to About Us page", async ({ page }) => {
-    await homePage.goToAboutUs();
+    await basePage.goToAboutUs();
     await expect(page).toHaveURL(/\/pages\/about-us/);
     await expect(page).toHaveTitle("About Us – Sauce Demo");
   });

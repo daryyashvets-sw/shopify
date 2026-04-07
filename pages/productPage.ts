@@ -4,19 +4,17 @@ import { BasePage } from "./basePage";
 export class ProductPage extends BasePage {
   readonly page: Page;
   readonly addToCartButton: Locator;
-  readonly cartCount: Locator;
   readonly cartButton: Locator;
   readonly checkoutButton: Locator;
-  readonly productNames: Locator;
+  readonly soldOutButton: Locator;
 
   constructor(page: Page) {
     super(page);
     this.page = page;
     this.addToCartButton = page.locator(".add-to-cart");
-    this.cartCount = page.locator("#cart-target-desktop");
     this.cartButton = page.locator(".checkout");
     this.checkoutButton = page.getByRole("button", { name: "Check Out" });
-    this.productNames = page.locator("#product-form");
+    this.soldOutButton = page.getByRole("button", { name: "Sold Out" });
   }
 
   async addToCart() {
@@ -30,6 +28,7 @@ export class ProductPage extends BasePage {
   async goToCheckout() {
     await this.checkoutButton.click();
   }
+
   async getProductName() {
     const productName = await this.page
       .locator('h1[itemprop="name"]')

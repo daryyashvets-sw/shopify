@@ -2,9 +2,12 @@
   "name": "new-black",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
-  "scripts": {},
-  "keywords": [],
+  "scripts": {
+    "test": "playwright test",
+    "test:ui": "playwright test tests/ui",
+    "test:api": "playwright test tests/api",
+    "test:debug": "playwright test --debug"
+  },
   "author": "",
   "license": "ISC",
   "type": "commonjs",

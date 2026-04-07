@@ -30,15 +30,22 @@ export class BasePage {
     this.productCards = page.locator('a[id^="product-"]');
     this.cartCount = page.locator("#cart-target-desktop");
   }
+  async goto() {
+    await this.page.goto("/");
+  }
+
   async goToHome() {
     await this.homeNavigationItem.click();
   }
+
   async goToCatalog() {
     await this.catalogNavigationItem.click();
   }
+
   async goToBlog() {
     await this.blogNavigationItem.click();
   }
+
   async goToAboutUs() {
     await this.aboutUsNavigationItem.click();
   }
@@ -68,9 +75,6 @@ export class BasePage {
     await this.searchInput.press("Enter");
   }
 
-  async goto() {
-    await this.page.goto("/");
-  }
   async getFirstProductName() {
     const name = await this.productCards.first().locator("h3").textContent();
     return name?.trim() || "";
@@ -83,5 +87,9 @@ export class BasePage {
 
   async clickProduct(name: string) {
     await this.productCards.filter({ hasText: name }).click();
+  }
+
+  async clickSoldOutProduct() {
+    await this.productCards.filter({ hasText: "Sold Out" }).first().click();
   }
 }

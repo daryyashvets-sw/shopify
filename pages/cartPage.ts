@@ -13,7 +13,7 @@ export class CartPage extends BasePage {
     super(page);
     this.page = page;
     this.checkoutButton = page.getByRole("button", { name: "Check Out" });
-    this.productQuantity = page.locator("#cart #updates_611945025");
+    this.productQuantity = page.locator("#cart .quantity input");
     this.updateButton = page.getByRole("button", { name: "Update" });
     this.total = page.getByRole("heading").filter({ hasText: "Total £" });
     this.removeButton = page.getByRole("link", { name: "x" });
@@ -30,6 +30,7 @@ export class CartPage extends BasePage {
   async changeProductQuantity(quantity: string) {
     await this.productQuantity.fill(quantity);
   }
+
   async getTotal() {
     const total = await this.total.textContent();
     return total?.trim() || "";

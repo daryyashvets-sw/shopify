@@ -72,7 +72,7 @@ export class CheckoutPage extends BasePage {
   async getTotalSum() {
     const totalText = await this.totalSum.textContent();
     const totalSum = totalText?.trim().substring(1) || "";
-    return parseInt(totalSum);
+    return parseFloat(totalSum);
   }
 
   async pay() {
