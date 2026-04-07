@@ -3,10 +3,13 @@ import { BasePage } from "../../pages/basePage";
 
 test.describe("Responsive Design", () => {
   test("should load mobile version on small screen", async ({ browser }) => {
-    // Create mobile context
-    const mobileContext = await browser.newContext({
-      ...devices["iPhone 13"],
-    });
+    const projectName = test.info().project.name;
+    test.skip(
+      projectName.includes("firefox"),
+      "isMobile option is not supported in Firefox",
+    );
+
+    const mobileContext = await browser.newContext(devices["iPhone 13"]);
     const mobilePage = await mobileContext.newPage();
     const basePage = new BasePage(mobilePage);
 

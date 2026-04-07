@@ -12,9 +12,7 @@ export class ProductPage extends BasePage {
     super(page);
     this.page = page;
     this.addToCartButton = page.getByRole("button", { name: "Add to Cart" });
-    //opens 'My cart' page
     this.cartLink = page.getByRole("link", { name: "Check Out" });
-    // opens 'Checkout' page
     this.checkoutButton = page.getByRole("button", { name: "Check Out" });
     this.soldOutButton = page.getByRole("button", { name: "Sold Out" });
   }
