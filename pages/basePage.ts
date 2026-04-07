@@ -75,6 +75,10 @@ export class BasePage {
   async searchForProduct(productName: string) {
     await this.searchInput.fill(productName);
     await this.searchInput.press("Enter");
+
+    if (productName) {
+      await this.page.waitForLoadState("networkidle");
+    }
   }
 
   async getFirstProductName() {
