@@ -13,6 +13,7 @@ export class BasePage {
   readonly searchInput: Locator;
   readonly productCards: Locator;
   readonly cartCount: Locator;
+  readonly mobileMenuToggle: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -29,6 +30,7 @@ export class BasePage {
     this.searchInput = page.getByRole("textbox", { name: "Search" });
     this.productCards = page.locator('a[id^="product-"]');
     this.cartCount = page.locator("#cart-target-desktop");
+    this.mobileMenuToggle = page.locator("#toggle-menu");
   }
   async goto() {
     await this.page.goto("/");

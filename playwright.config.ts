@@ -1,4 +1,7 @@
 import { defineConfig, devices } from "@playwright/test";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 export default defineConfig({
   timeout: 60000,
@@ -12,10 +15,20 @@ export default defineConfig({
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: "html",
+  reporter: [
+    ["html"], // Keep default HTML reporter
+    [
+      "allure-playwright",
+      {
+        outputFolder: "allure-results",
+        detail: true,
+        suiteTitle: false,
+      },
+    ],
+  ],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
-    baseURL: "https://sauce-demo.myshopify.com/",
+    // baseURL: "https://sauce-demo.myshopify.com/",
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: "on-first-retry",
@@ -24,18 +37,50 @@ export default defineConfig({
   /* Configure projects for major browsers */
   projects: [
     {
-      name: "chromium",
-      use: { ...devices["Desktop Chrome"] },
+      name: "ui-chrome",
+      testDir: "./tests/ui",
+      use: {
+        baseURL: "https://sauce-demo.myshopify.com",
+        ...devices["Desktop Chrome"],
+      },
+    },
+    {
+      name: "ui-firefox",
+      testDir: "./tests/ui",
+      use: {
+        baseURL: "https://sauce-demo.myshopify.com",
+        ...devices["Desktop Firefox"],
+      },
+    },
+    {
+      name: "ui-safari",
+      testDir: "./tests/ui",
+      use: {
+        baseURL: "https://sauce-demo.myshopify.com",
+        ...devices["Desktop Safari"],
+      },
     },
 
+    {
+      name: "api-tests",
+      testDir: "./tests/api",
+      use: {
+        baseURL: "https://restful-booker.herokuapp.com",
+      },
+    },
     // {
-    //   name: 'firefox',
-    //   use: { ...devices['Desktop Firefox'] },
+    //   name: "chromium",
+    //   use: { ...devices["Desktop Chrome"] },
     // },
 
     // {
-    //   name: 'webkit',
-    //   use: { ...devices['Desktop Safari'] },
+    //   name: "firefox",
+    //   use: { ...devices["Desktop Firefox"] },
+    // },
+
+    // {
+    //   name: "webkit",
+    //   use: { ...devices["Desktop Safari"] },
     // },
 
     /* Test against mobile viewports. */

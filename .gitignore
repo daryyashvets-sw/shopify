@@ -8,3 +8,9 @@ node_modules/
 /playwright/.auth/
 .env
 *.log
+
+# Allure
+allure-results/
+allure-report/
+
+SAUCE_PASSWORD=password123

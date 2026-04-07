@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { BasePage } from "../../pages/basePage";
-import { socialMediaLinks } from "../../fixtures/userData";
+import { socialMediaLinks } from "../../fixtures/socialMediaLinks";
 
 test.describe("Social Media Links", () => {
   let basePage: BasePage;

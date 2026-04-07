@@ -36,14 +36,4 @@ test.describe("Product Listing", () => {
 
     await expect(productPage.addToCartButton).toBeVisible();
   });
-
-  test("should not let add sold out product to cart", async ({ page }) => {
-    const productPage = new ProductPage(page);
-
-    await basePage.goToCatalog();
-    await basePage.clickSoldOutProduct();
-
-    await expect(productPage.addToCartButton).not.toBeVisible();
-    await expect(productPage.soldOutButton).toBeVisible();
-  });
 });

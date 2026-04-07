@@ -4,15 +4,17 @@ import { BasePage } from "./basePage";
 export class ProductPage extends BasePage {
   readonly page: Page;
   readonly addToCartButton: Locator;
-  readonly cartButton: Locator;
+  readonly cartLink: Locator;
   readonly checkoutButton: Locator;
   readonly soldOutButton: Locator;
 
   constructor(page: Page) {
     super(page);
     this.page = page;
-    this.addToCartButton = page.locator(".add-to-cart");
-    this.cartButton = page.locator(".checkout");
+    this.addToCartButton = page.getByRole("button", { name: "Add to Cart" });
+    //opens 'My cart' page
+    this.cartLink = page.getByRole("link", { name: "Check Out" });
+    // opens 'Checkout' page
     this.checkoutButton = page.getByRole("button", { name: "Check Out" });
     this.soldOutButton = page.getByRole("button", { name: "Sold Out" });
   }
@@ -22,7 +24,7 @@ export class ProductPage extends BasePage {
   }
 
   async goToCart() {
-    await this.cartButton.click();
+    await this.cartLink.click();
   }
 
   async goToCheckout() {

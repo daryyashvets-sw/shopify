@@ -6,10 +6,17 @@ import { userData } from "../../fixtures/userData";
 import { CheckoutPage } from "../../pages/checkoutPage";
 
 test.describe("Cart and checkout", () => {
+  let basePage: BasePage;
+  let productPage: ProductPage;
+  let cartPage: CartPage;
+
+  test.beforeEach(async ({ page }) => {
+    basePage = new BasePage(page);
+    productPage = new ProductPage(page);
+    cartPage = new CartPage(page);
+  });
+
   test("should complete checkout flow up to payment", async ({ page }) => {
-    const basePage = new BasePage(page);
-    const productPage = new ProductPage(page);
-    const cartPage = new CartPage(page);
     const checkoutPage = new CheckoutPage(page);
 
     await basePage.goto();
@@ -32,10 +39,6 @@ test.describe("Cart and checkout", () => {
   test("should update total after changing quantity of products", async ({
     page,
   }) => {
-    const basePage = new BasePage(page);
-    const productPage = new ProductPage(page);
-    const cartPage = new CartPage(page);
-
     await basePage.goto();
 
     const productNameFromHomepage = await basePage.getFirstProductName();
@@ -70,10 +73,6 @@ test.describe("Cart and checkout", () => {
   test("should display empty cart message after removing product", async ({
     page,
   }) => {
-    const basePage = new BasePage(page);
-    const productPage = new ProductPage(page);
-    const cartPage = new CartPage(page);
-
     await basePage.goto();
 
     const productNameFromHomepage = await basePage.getFirstProductName();

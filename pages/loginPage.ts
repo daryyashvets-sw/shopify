@@ -6,7 +6,7 @@ export class LoginPage extends BasePage {
   readonly page: Page;
   readonly emailInput: Locator;
   readonly passwordInput: Locator;
-  readonly SigninButton: Locator;
+  readonly signinButton: Locator;
   readonly invalidCredentialsError: Locator;
 
   constructor(page: Page) {
@@ -14,7 +14,7 @@ export class LoginPage extends BasePage {
     this.page = page;
     this.emailInput = page.getByLabel("Email Address");
     this.passwordInput = page.getByLabel("Password");
-    this.SigninButton = page.getByRole("button", { name: "Sign in" });
+    this.signinButton = page.getByRole("button", { name: "Sign in" });
     this.invalidCredentialsError = page.getByText(
       "Incorrect email or password.",
     );
@@ -26,6 +26,6 @@ export class LoginPage extends BasePage {
   }
 
   async clickSigninButton() {
-    await this.SigninButton.click();
+    await this.signinButton.click();
   }
 }

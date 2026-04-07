@@ -35,24 +35,25 @@ export class CheckoutPage extends BasePage {
     return this.page.locator("iframe").first().contentFrame();
   }
 
-  async fillCardNumber(cardNumber: string) {
+  async fillInPaymentFrame(selector: string, value: string) {
     const frame = await this.getPaymentFrame();
-    await frame.locator("#number").fill(cardNumber);
+    await frame.locator(selector).fill(value);
+  }
+
+  async fillCardNumber(cardNumber: string) {
+    await this.fillInPaymentFrame("#number", cardNumber);
   }
 
   async fillExpirationDate(expirationDate: string) {
-    const frame = await this.getPaymentFrame();
-    await frame.locator("#expiry").fill(expirationDate);
+    await this.fillInPaymentFrame("#expiry", expirationDate);
   }
 
   async fillSecurityCode(securityCode: string) {
-    const frame = await this.getPaymentFrame();
-    await frame.locator("#verification_value").fill(securityCode);
+    await this.fillInPaymentFrame("#verification_value", securityCode);
   }
 
   async fillNameOnCard(nameOnCard: string) {
-    const frame = await this.getPaymentFrame();
-    await frame.locator("#name").fill(nameOnCard);
+    await this.fillInPaymentFrame("#name", nameOnCard);
   }
 
   async fillCheckoutForm(data: UserData) {
@@ -71,8 +72,9 @@ export class CheckoutPage extends BasePage {
 
   async getTotalSum() {
     const totalText = await this.totalSum.textContent();
-    const totalSum = totalText?.trim().substring(1) || "";
-    return parseFloat(totalSum);
+    const totalSum = totalText?.trim().substring(1) || "0";
+    const parsed = parseFloat(totalSum);
+    return isNaN(parsed) ? 0 : parsed;
   }
 
   async pay() {
